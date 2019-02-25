@@ -1,0 +1,19 @@
+---
+- name: Switch VMware tools
+  become: true
+  become_method: sudo
+  become_user: root
+  hosts: ciinvdb2.ci.northwestern.edu
+
+  tasks:
+  - name: removing vmware tools if a vm and RHEL7
+    command: /usr/bin/vmware-uninstall-tools.pl
+    when: ansible_os_family == "RedHat" and ansible_virtualization_type == "VMware" and ansible_distribution_major_version == "7"
+
+  - name: installing open-vm-tools
+    yum: name=open-vm-tools state=present
+    when: ansible_os_family == "RedHat" and ansible_virtualization_type == "VMware" and ansible_distribution_major_version == "7"
+
+  - name: starting and enabling open-vm-tools
+    service: name=vmtoolsd.service state=restarted enabled=yes
+    when: ansible_os_family == "RedHat" and ansible_virtualization_type == "VMware" and ansible_distribution_major_version == "7"
