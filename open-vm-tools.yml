@@ -6,9 +6,14 @@
   hosts: ciinvdb2.ci.northwestern.edu
 
   tasks:
+  - name: Check that the VM Tools exist
+    stat:
+      path: /usr/bin/vmware-uninstall-tools.pl
+    register: stat_result
+
   - name: removing vmware tools if a vm and RHEL7
     command: /usr/bin/vmware-uninstall-tools.pl
-    when: ansible_os_family == "RedHat" and ansible_virtualization_type == "VMware" and ansible_distribution_major_version == "7"
+    when: ansible_os_family == "RedHat" and ansible_virtualization_type == "VMware" and ansible_distribution_major_version == "7" and stat_result.stat.exists == True
 
   - name: installing open-vm-tools
     yum: name=open-vm-tools state=present
