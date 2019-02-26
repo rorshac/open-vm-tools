@@ -9,14 +9,15 @@
   - name: Check that the VM Tools exist
     stat:
       path: /usr/bin/vmware-uninstall-tools.pl
-    register: stat_result
+    register: tools_exist
 
   - name: removing vmware tools if a vm and RHEL7
     command: /usr/bin/vmware-uninstall-tools.pl
-    when: ansible_os_family == "RedHat" and ansible_virtualization_type == "VMware" and ansible_distribution_major_version == "7" and stat_result.stat.exists == True
+    when: ansible_os_family == "RedHat" and ansible_virtualization_type == "VMware" and ansible_distribution_major_version == "7" and tools_exist.stat.exists
 
   - name: installing open-vm-tools
-    yum: name=open-vm-tools state=present
+    yum: name=open-vm-tools
+         state=present
     when: ansible_os_family == "RedHat" and ansible_virtualization_type == "VMware" and ansible_distribution_major_version == "7"
 
   - name: starting and enabling open-vm-tools
