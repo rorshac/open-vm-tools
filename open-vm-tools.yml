@@ -3,7 +3,7 @@
   become: true
   become_method: sudo
   become_user: root
-  hosts: ciinvdb2.ci.northwestern.edu
+  hosts: "{{ servers }}"
 
   tasks:
   - name: Check that the VM Tools exist
